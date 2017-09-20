@@ -1,6 +1,8 @@
 package com.mdekhtiarenko.models.dao.impl;
 
+import com.mdekhtiarenko.models.dao.DiagnoseDao;
 import com.mdekhtiarenko.models.dao.PatientDao;
+import com.mdekhtiarenko.models.dao.TreatmentHistoryDao;
 import com.mdekhtiarenko.models.dao.utils.EntityRetriever;
 import com.mdekhtiarenko.models.dao.utils.SecurityUtils;
 import com.mdekhtiarenko.models.entities.Patient;
@@ -152,14 +154,20 @@ public class PatientDaoImpl implements PatientDao {
         return deleted;
     }
 
-    public List<TreatmentHistory> getTreatmentHistoryListForPatient(Integer patientId) {
+    public List<TreatmentHistory> getTreatmentHistoryListForPatient(Integer patientId,
+                                                                    TreatmentHistoryDao treatmentHistoryDao,
+                                                                    DiagnoseDao diagnoseDao) {
         logger.debug("patientId: "+patientId);
         List<TreatmentHistory> treatmentHistoryList = new ArrayList<>();
         try (PreparedStatement statement
                      = connection.prepareStatement(SELECT_TREATMENT_HISTORIES)) {
+            statement.setInt(1, patientId);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
-                treatmentHistoryList.add(EntityRetriever.retrieveTreatmentHistory(rs));
+                TreatmentHistory treatmentHistory = EntityRetriever.retrieveTreatmentHistory(rs);
+                treatmentHistory.setDiagnoseList(
+                        treatmentHistoryDao.getDiagnoseListForTreatmentHistory(treatmentHistory.getId(), diagnoseDao));
+                treatmentHistoryList.add(treatmentHistory);
             }
 
         } catch (SQLException e) {

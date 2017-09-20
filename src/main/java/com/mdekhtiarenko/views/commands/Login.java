@@ -1,29 +1,21 @@
 package com.mdekhtiarenko.views.commands;
 
-import com.mdekhtiarenko.models.dao.impl.AssignmentDaoImpl;
 import com.mdekhtiarenko.models.entities.Patient;
 import com.mdekhtiarenko.models.entities.Staff;
 import com.mdekhtiarenko.services.PatientService;
 import com.mdekhtiarenko.services.StaffService;
 import org.apache.log4j.Logger;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.time.LocalDate;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import static com.mdekhtiarenko.views.commands.Constants.*;
 
 /**
  * Created by mykola.dekhtiarenko on 13.09.17.
  */
 public class Login implements Command{
-
-    public static final String PARAM_LOGIN = "email";
-    public static final String PARAM_PASSWORD ="password";
-    public static final String STAFF_HOMEPAGE ="/pages/staffHome.jsp";
-    public static final String PATIENT_HOMEPAGE ="/pages/patientHome.jsp";
-    public static final String LOGIN_PAGE ="/pages/login.jsp";
-
 
     private final Logger logger = Logger.getLogger(Login.class.getName());
 
@@ -31,26 +23,24 @@ public class Login implements Command{
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         String email = request.getParameter(PARAM_LOGIN);
         String password = request.getParameter(PARAM_PASSWORD);
-        logger.debug(email+" "+password);
         if( email != null && password != null ){
             Optional<Staff> staffUser = staffLogin(email, password);
             if(staffUser.isPresent()){
                 logger.debug("Staff: "+email+" logged in!");
-                request.getSession().setAttribute("stuffUser", staffUser.get());
-                return STAFF_HOMEPAGE;
+                request.getSession().setAttribute(STAFF_USER, staffUser.get());
+                return request.getD;
             }
 
             Optional<Patient> patientUser = patientLogin(email, password);
             if(patientUser.isPresent()){
                 logger.debug("Patient: "+email+" logged in!");
-                request.getSession().setAttribute("patientUser", staffUser.get());
-                return PATIENT_HOMEPAGE;
+                request.getSession().setAttribute(PATIENT_USER, patientUser.get());
+                return new GetHomePage().execute(request, response);
             }
-            ResourceBundle labelsBundle = ResourceBundle.getBundle("Labels");
-            System.out.println(labelsBundle.getLocale()+": "+labelsBundle.getString("unable_to_login"));
-            request.setAttribute("unableToLogin", labelsBundle.getString("unable_to_login"));
         }
-        return LOGIN_PAGE;
+        ResourceBundle labelsBundle = ResourceBundle.getBundle("Labels");
+        request.setAttribute("unableToLogin", labelsBundle.getString("unable_to_login"));
+        return new GetLoginPage().execute(request, response);
     }
 
     private Optional<Staff> staffLogin(String email, String password){

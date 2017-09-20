@@ -9,6 +9,8 @@ import java.util.List;
  * Created by mykola.dekhtiarenko on 09.09.17.
  */
 public interface PatientDao extends GenericDao<Patient> {
-    List<TreatmentHistory> getTreatmentHistoryListForPatient(Integer patientId);
+    List<TreatmentHistory> getTreatmentHistoryListForPatient(Integer patientId,
+                                                             TreatmentHistoryDao treatmentHistoryDao,
+                                                             DiagnoseDao diagnoseDao);
     Patient getPatientByEmail(String email);
 }

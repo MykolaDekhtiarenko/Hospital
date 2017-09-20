@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.mdekhtiarenko.views.commands.Constants.INDEX_PAGE;
+
 /**
  * Created by mykola.dekhtiarenko on 13.09.17.
  */
@@ -20,14 +22,14 @@ import java.util.Map;
 public class AppController extends HttpServlet{
 
     private static final Logger logger = Logger.getLogger(AppController.class);
-    private Map<String, Command> commandMap = new HashMap<>();
+    private Map<String, Command> urls = new HashMap<>();
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        commandMap.put("POST:/login", new Login());
-        commandMap.put("GET:/login", new Login());
-        commandMap.put("GET:/home", new GetHomePage());
-        commandMap.put("GET:/error", new Error404());
+        urls.put("POST:/login", new Login());
+        urls.put("GET:/login", new GetLoginPage());
+        urls.put("GET:/home", new GetHomePage());
+        urls.put("GET:/error", new Error404());
         super.init(config);
     }
 
@@ -47,7 +49,7 @@ public class AppController extends HttpServlet{
         path = path.replaceAll(".*/rest", "").replaceAll("\\d+", "");
         String url = method+":"+path;
         logger.debug("Asked url in controller: "+url);
-        Command command = commandMap.getOrDefault(url, (req, resp)->"/index.jsp" );
+        Command command = urls.getOrDefault(url, (req, resp)->INDEX_PAGE);
         String viewPage = command.execute(request, response);
         request.getRequestDispatcher(viewPage)
                 .forward(request, response);

@@ -123,6 +123,7 @@ public class DiagnoseDaoImpl implements DiagnoseDao {
         List<Assignment> assignmentList = new ArrayList<>();
         try (PreparedStatement statement
                      = connection.prepareStatement(SELECT_ASSIGNMENTS)) {
+            statement.setInt(1, diagnoseId);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 assignmentList.add(EntityRetriever.retrieveAssignment(rs));

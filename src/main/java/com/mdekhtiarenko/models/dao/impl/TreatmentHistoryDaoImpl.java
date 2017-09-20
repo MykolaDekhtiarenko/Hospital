@@ -1,5 +1,6 @@
 package com.mdekhtiarenko.models.dao.impl;
 
+import com.mdekhtiarenko.models.dao.DiagnoseDao;
 import com.mdekhtiarenko.models.dao.TreatmentHistoryDao;
 import com.mdekhtiarenko.models.dao.utils.EntityRetriever;
 import com.mdekhtiarenko.models.entities.Diagnose;
@@ -125,13 +126,16 @@ public class TreatmentHistoryDaoImpl implements TreatmentHistoryDao {
         return deleted;
     }
 
-    public List<Diagnose> getDiagnoseListForTreatmentHistory(Integer treatmentHistoryId) {
+    public List<Diagnose> getDiagnoseListForTreatmentHistory(Integer treatmentHistoryId, DiagnoseDao diagnoseDao) {
         List<Diagnose> diagnoseList = new ArrayList<>();
         try (PreparedStatement statement
                      = connection.prepareStatement(SELECT_DIAGNOSES)) {
+            statement.setInt(1, treatmentHistoryId);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
-                diagnoseList.add(EntityRetriever.retrieveDiagnose(rs));
+                Diagnose diagnose = EntityRetriever.retrieveDiagnose(rs);
+                diagnose.setAssignmentList(diagnoseDao.getAssignmentListForDiagnose(diagnose.getId()));
+                diagnoseList.add(diagnose);
             }
 
         } catch (SQLException e) {

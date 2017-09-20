@@ -7,9 +7,13 @@ import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.mdekhtiarenko.views.commands.Constants.PATIENT_USER;
+import static com.mdekhtiarenko.views.commands.Constants.STAFF_USER;
 
 /**
  * Created by mykola.dekhtiarenko on 14.09.17.
@@ -36,8 +40,12 @@ public class UrlFilter implements Filter {
         path = path.replaceAll(".*/rest", "").replaceAll("\\d+", "");
         String url = method+":"+path;
         logger.debug("Asked url: "+url);
-        if(restrictedUrls.contains(url)){
-            logger.debug("Restricted url: "+url);
+
+        HttpSession session = ((HttpServletRequest) servletRequest).getSession();
+        if(restrictedUrls.contains(url)
+                &&session.getAttribute(STAFF_USER)==null
+                &&session.getAttribute(PATIENT_USER)==null){
+
             response.sendRedirect(request.getContextPath() + URL_TO_GO);
         }
         else {
