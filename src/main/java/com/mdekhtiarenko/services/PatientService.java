@@ -13,7 +13,7 @@ import java.util.Optional;
  */
 public class PatientService {
 
-    DaoFactory daoFactory;
+    private DaoFactory daoFactory;
 
     PatientService(DaoFactory instance){
         daoFactory = instance;

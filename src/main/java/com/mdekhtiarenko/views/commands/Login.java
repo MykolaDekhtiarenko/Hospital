@@ -5,8 +5,11 @@ import com.mdekhtiarenko.models.entities.Staff;
 import com.mdekhtiarenko.services.PatientService;
 import com.mdekhtiarenko.services.StaffService;
 import org.apache.log4j.Logger;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -20,15 +23,15 @@ public class Login implements Command{
     private final Logger logger = Logger.getLogger(Login.class.getName());
 
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) {
+    public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter(PARAM_LOGIN);
         String password = request.getParameter(PARAM_PASSWORD);
         if( email != null && password != null ){
             Optional<Staff> staffUser = staffLogin(email, password);
             if(staffUser.isPresent()){
-                logger.debug("Staff: "+email+" logged in!");
+                logger.info("Staff: "+email+" logged in!");
                 request.getSession().setAttribute(STAFF_USER, staffUser.get());
-                return request.getD;
+                return new GetHomePage().execute(request, response);
             }
 
             Optional<Patient> patientUser = patientLogin(email, password);

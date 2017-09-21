@@ -11,7 +11,7 @@ import java.util.Optional;
  */
 public class StaffService {
 
-    DaoFactory daoFactory;
+    private DaoFactory daoFactory;
 
     StaffService(DaoFactory instance){
         daoFactory = instance;
