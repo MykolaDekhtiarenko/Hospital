@@ -19,7 +19,6 @@ public class Assignment {
     private Date dateOfExecution;
     private String description;
     private AssignmentType type;
-    private int staffId;
     private int diagnoseId;
 
 }

@@ -18,6 +18,6 @@ public class TreatmentHistory {
     private Date startDate;
     private Date endDate;
     private String conclusion;
-    private int patientId;
+    private int userId;
     private List<Diagnose> diagnoseList;
 }

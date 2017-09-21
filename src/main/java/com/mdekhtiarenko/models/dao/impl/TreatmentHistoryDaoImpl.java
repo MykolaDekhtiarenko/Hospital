@@ -21,7 +21,7 @@ import java.util.List;
 public class TreatmentHistoryDaoImpl implements TreatmentHistoryDao {
     private static final String SELECT_ALL = "SELECT * FROM TREATMENTHISTORY";
     private static final String SELECT_BY_ID = "SELECT * FROM TREATMENTHISTORY WHERE id = ?";
-    private static final String CREATE = "INSERT INTO TREATMENTHISTORY (Patient_id)\n" +
+    private static final String CREATE = "INSERT INTO TREATMENTHISTORY (User_id)\n" +
             "VALUES (?);";
     private static final String UPDATE = "UPDATE TREATMENTHISTORY SET " +
             "endDate = ?, conclusion = ?" +
@@ -30,7 +30,6 @@ public class TreatmentHistoryDaoImpl implements TreatmentHistoryDao {
 
     private static final String SELECT_DIAGNOSES = "SELECT * FROM Diagnose WHERE TreatmentHistory_id = ?";
 
-    private final Logger logger = Logger.getLogger(AssignmentDaoImpl.class.getName());
 
     private Connection connection;
     public TreatmentHistoryDaoImpl(Connection connection) {
@@ -48,13 +47,10 @@ public class TreatmentHistoryDaoImpl implements TreatmentHistoryDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        logger.debug("List size: "+allTreatmentHistories.size());
         return allTreatmentHistories;
     }
 
     public TreatmentHistory findById(Integer id) {
-        logger.debug("id: "+ id);
-
         TreatmentHistory treatmentHistory = null;
         try (PreparedStatement statement
                      = connection.prepareStatement(SELECT_BY_ID)) {
@@ -66,15 +62,13 @@ public class TreatmentHistoryDaoImpl implements TreatmentHistoryDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        logger.debug(treatmentHistory.toString());
         return treatmentHistory;
     }
 
     public boolean create(TreatmentHistory treatmentHistory) {
-        logger.debug(treatmentHistory.toString());
         try (PreparedStatement statement
                      = connection.prepareStatement(CREATE)) {
-            statement.setInt(1, treatmentHistory.getPatientId());
+            statement.setInt(1, treatmentHistory.getUserId());
             statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -85,8 +79,6 @@ public class TreatmentHistoryDaoImpl implements TreatmentHistoryDao {
 
     public TreatmentHistory update(TreatmentHistory infoForUpdate) {
         TreatmentHistory current = findById(infoForUpdate.getId());
-        logger.debug("Info for update: "+infoForUpdate.toString());
-        logger.debug("Current: "+current.toString());
 
         try (PreparedStatement statement
                      = connection.prepareStatement(UPDATE)) {
@@ -113,8 +105,6 @@ public class TreatmentHistoryDaoImpl implements TreatmentHistoryDao {
 
     public TreatmentHistory delete(Integer id) {
         TreatmentHistory deleted = findById(id);
-        logger.debug("id: "+id);
-        logger.debug(deleted.toString());
         try (PreparedStatement statement
                      = connection.prepareStatement(DELETE)) {
             statement.setInt(1, id);
@@ -141,7 +131,6 @@ public class TreatmentHistoryDaoImpl implements TreatmentHistoryDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        logger.debug("List size: "+diagnoseList.size());
         return diagnoseList;
     }
 

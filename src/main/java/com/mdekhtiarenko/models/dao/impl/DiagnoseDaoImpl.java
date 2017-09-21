@@ -20,7 +20,7 @@ import java.util.List;
 public class DiagnoseDaoImpl implements DiagnoseDao {
     private static final String SELECT_ALL = "SELECT * FROM DIAGNOSE";
     private static final String SELECT_BY_ID = "SELECT * FROM DIAGNOSE WHERE id = ?";
-    private static final String CREATE = "INSERT INTO DIAGNOSE (diagnose, TreatmentHistory_id, Staff_id)\n" +
+    private static final String CREATE = "INSERT INTO DIAGNOSE (diagnose, TreatmentHistory_id, Creator_id)\n" +
             "VALUES (?, ?, ?);";
     private static final String UPDATE = "UPDATE DIAGNOSE SET " +
             "diagnose = ? " +
@@ -29,7 +29,6 @@ public class DiagnoseDaoImpl implements DiagnoseDao {
 
     private static final String SELECT_ASSIGNMENTS = "SELECT * FROM Assignment WHERE Diagnose_id = ?";
 
-    private final Logger logger = Logger.getLogger(AssignmentDaoImpl.class.getName());
 
     private Connection connection;
     public DiagnoseDaoImpl(Connection connection) {
@@ -47,12 +46,10 @@ public class DiagnoseDaoImpl implements DiagnoseDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        logger.debug("List size: "+allDiagnoses.size());
         return allDiagnoses;
     }
 
     public Diagnose findById(Integer id){
-        logger.debug("id: "+id);
         Diagnose diagnose = null;
         try(PreparedStatement statement
                     = connection.prepareStatement(SELECT_BY_ID)) {
@@ -64,17 +61,15 @@ public class DiagnoseDaoImpl implements DiagnoseDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        logger.debug(diagnose.toString());
         return diagnose;
     }
 
     public boolean create(Diagnose diagnose) {
-        logger.debug(diagnose.toString());
         try (PreparedStatement statement
                      = connection.prepareStatement(CREATE)){
             statement.setString(1, diagnose.getDiagnose());
             statement.setInt(2, diagnose.getTreatmentHistoryId());
-            statement.setInt(3, diagnose.getStaffId());
+            statement.setInt(3, diagnose.getCreatorId());
 
             statement.execute();
 
@@ -87,8 +82,6 @@ public class DiagnoseDaoImpl implements DiagnoseDao {
 
     public Diagnose update(Diagnose infoForUpdate) {
         Diagnose current = findById(infoForUpdate.getId());
-        logger.debug("Info for update: "+infoForUpdate.toString());
-        logger.debug("Current: "+current.toString());
         try (PreparedStatement statement
                      = connection.prepareStatement(UPDATE)){
             if(infoForUpdate.getDiagnose()!=null)
@@ -108,7 +101,6 @@ public class DiagnoseDaoImpl implements DiagnoseDao {
 
     public Diagnose delete(Integer id) {
         Diagnose deleted = findById(id);
-        logger.debug(deleted.toString());
         try (PreparedStatement statement
                      = connection.prepareStatement(DELETE)){
             statement.setInt(1, id);
@@ -132,7 +124,6 @@ public class DiagnoseDaoImpl implements DiagnoseDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        logger.debug("List size: "+assignmentList.size());
         return assignmentList;
     }
 

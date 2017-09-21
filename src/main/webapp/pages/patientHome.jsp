@@ -42,8 +42,7 @@
                     <div class="card-header" role="tab" id="heading${treatmentHistory.getId()}">
                         <h5 class="mb-0">
                             <a data-toggle="collapse" href="#collapse${treatmentHistory.getId()}" aria-expanded="true" aria-controls="collapse${treatmentHistory.getId()}">
-                                <fmt:formatDate type = "date" value = "${treatmentHistory.getStartDate()}" />
-                                 - <fmt:formatDate type = "date" value="${treatmentHistory.getEndDate()}" />
+                                ${treatmentHistory.getStartDate()} - <c:out value="${treatmentHistory.getEndDate()}" default="${now}"/>
                             </a>
                         </h5>
                     </div>

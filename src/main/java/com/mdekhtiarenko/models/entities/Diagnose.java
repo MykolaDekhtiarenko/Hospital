@@ -18,6 +18,6 @@ public class Diagnose {
     private Date date;
     private String diagnose;
     private int treatmentHistoryId;
-    private int staffId;
+    private int creatorId;
     private List<Assignment> assignmentList;
 }

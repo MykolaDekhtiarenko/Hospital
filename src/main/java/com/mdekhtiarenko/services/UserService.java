@@ -1,37 +1,36 @@
 package com.mdekhtiarenko.services;
 
 import com.mdekhtiarenko.models.dao.DaoFactory;
-import com.mdekhtiarenko.models.dao.PatientDao;
-import com.mdekhtiarenko.models.dao.TreatmentHistoryDao;
+import com.mdekhtiarenko.models.dao.UserDao;
 import com.mdekhtiarenko.models.dao.utils.SecurityUtils;
-import com.mdekhtiarenko.models.entities.Patient;
+import com.mdekhtiarenko.models.entities.User;
 
 import java.util.Optional;
 
 /**
  * Created by mykola.dekhtiarenko on 18.09.17.
  */
-public class PatientService {
+public class UserService {
 
     private DaoFactory daoFactory;
 
-    PatientService(DaoFactory instance){
+    UserService(DaoFactory instance){
         daoFactory = instance;
     }
 
-    public Optional<Patient> login(String email, String password){
-        PatientDao dao = daoFactory.createPatientDAO();
+    public Optional<User> login(String email, String password){
+        UserDao dao = daoFactory.createPatientDAO();
         return Optional.ofNullable(dao.getPatientByEmail(email))
                 .filter( patient -> SecurityUtils.decode(password).equals(patient.getPassword()));
     }
 
-    public Optional<Patient> getFullPatientInfo(int id){
-        PatientDao dao = daoFactory.createPatientDAO();
-        Optional<Patient> patient = Optional.ofNullable(dao.findById(id));
+    public Optional<User> getFullPatientInfo(int id){
+        UserDao dao = daoFactory.createPatientDAO();
+        Optional<User> patient = Optional.ofNullable(dao.findById(id));
         if(patient.isPresent()) {
             patient.get()
                     .setTreatmentHistoryList(
-                            dao.getTreatmentHistoryListForPatient(
+                            dao.getTreatmentHistoryList(
                                     id,
                                     daoFactory.createTreatmentHistoryDAO(),
                                     daoFactory.createDiagnoseDAO()));
@@ -42,10 +41,10 @@ public class PatientService {
 
     //singelton pattern
     private static class Holder{
-        private static PatientService INSTANCE = new PatientService(DaoFactory.getInstance());
+        private static UserService INSTANCE = new UserService(DaoFactory.getInstance());
     }
 
-    public static PatientService getInstance(){
-        return PatientService.Holder.INSTANCE;
+    public static UserService getInstance(){
+        return UserService.Holder.INSTANCE;
     }
 }

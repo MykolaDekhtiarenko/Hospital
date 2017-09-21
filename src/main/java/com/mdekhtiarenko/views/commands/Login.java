@@ -1,9 +1,7 @@
 package com.mdekhtiarenko.views.commands;
 
-import com.mdekhtiarenko.models.entities.Patient;
-import com.mdekhtiarenko.models.entities.Staff;
-import com.mdekhtiarenko.services.PatientService;
-import com.mdekhtiarenko.services.StaffService;
+import com.mdekhtiarenko.models.entities.User;
+import com.mdekhtiarenko.services.UserService;
 import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
@@ -27,17 +25,10 @@ public class Login implements Command{
         String email = request.getParameter(PARAM_LOGIN);
         String password = request.getParameter(PARAM_PASSWORD);
         if( email != null && password != null ){
-            Optional<Staff> staffUser = staffLogin(email, password);
-            if(staffUser.isPresent()){
-                logger.info("Staff: "+email+" logged in!");
-                request.getSession().setAttribute(STAFF_USER, staffUser.get());
-                return new GetHomePage().execute(request, response);
-            }
-
-            Optional<Patient> patientUser = patientLogin(email, password);
-            if(patientUser.isPresent()){
-                logger.debug("Patient: "+email+" logged in!");
-                request.getSession().setAttribute(PATIENT_USER, patientUser.get());
+            Optional<User> user = patientLogin(email, password);
+            if(user.isPresent()){
+                logger.info("User: "+email+" logged in!");
+                request.getSession().setAttribute(USER, user.get());
                 return new GetHomePage().execute(request, response);
             }
         }
@@ -45,14 +36,10 @@ public class Login implements Command{
         request.setAttribute("unableToLogin", labelsBundle.getString("unable_to_login"));
         return new GetLoginPage().execute(request, response);
     }
+    
 
-    private Optional<Staff> staffLogin(String email, String password){
-        StaffService service = StaffService.getInstance();
-        return service.login(email, password);
-    }
-
-    private Optional<Patient> patientLogin(String email, String password){
-        PatientService service = PatientService.getInstance();
+    private Optional<User> patientLogin(String email, String password){
+        UserService service = UserService.getInstance();
         return service.login(email, password);
     }
 

@@ -18,14 +18,13 @@ import org.apache.log4j.Logger;
 public class AssignmentDaoImpl implements AssignmentDao {
     private static final String SELECT_ALL = "SELECT * FROM ASSIGNMENT";
     private static final String SELECT_BY_ID = "SELECT * FROM ASSIGNMENT WHERE id = ?";
-    private static final String CREATE = "INSERT INTO ASSIGNMENT (description, type, Diagnose_id, Staff_id)\n" +
-            "VALUES (?, ?, ?, ?);";
+    private static final String CREATE = "INSERT INTO ASSIGNMENT (description, type, Diagnose_id)\n" +
+            "VALUES (?, ?, ?);";
     private static final String UPDATE = "UPDATE ASSIGNMENT SET " +
             "dateOfExecution = ?, description = ?, type = ? " +
             "WHERE id = ?";
     private static final String DELETE = "DELETE FROM ASSIGNMENT WHERE id = ?";
 
-    private final Logger logger = Logger.getLogger(AssignmentDaoImpl.class.getName());
     private Connection connection;
     public AssignmentDaoImpl(Connection connection) {
         this.connection = connection;
@@ -42,12 +41,10 @@ public class AssignmentDaoImpl implements AssignmentDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        logger.debug(allAssigment.toString());
         return allAssigment;
     }
 
     public Assignment findById(Integer id){
-        logger.debug("id: "+id);
         Assignment assignment = null;
         try (PreparedStatement statement
                      = connection.prepareStatement(SELECT_BY_ID)){
@@ -59,19 +56,16 @@ public class AssignmentDaoImpl implements AssignmentDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        logger.debug(assignment.toString());
         return assignment;
     }
 
     public boolean create(Assignment assignment){
-        logger.debug(assignment.toString());
         try(PreparedStatement statement
                     = connection.prepareStatement(CREATE)) {
 
             statement.setString(1, assignment.getDescription());
             statement.setString(2, assignment.getType().name());
             statement.setInt(3, assignment.getDiagnoseId());
-            statement.setInt(4, assignment.getStaffId());
             statement.execute();
 
         } catch (SQLException e) {
@@ -83,8 +77,6 @@ public class AssignmentDaoImpl implements AssignmentDao {
 
     public  Assignment update(Assignment infoForUpdate){
         Assignment current = findById(infoForUpdate.getId());
-        logger.debug("Info for update: "+infoForUpdate.toString());
-        logger.debug("Current: "+current.toString());
 
         try(PreparedStatement statement
                     = connection.prepareStatement(UPDATE)) {
@@ -116,7 +108,6 @@ public class AssignmentDaoImpl implements AssignmentDao {
 
     public Assignment delete(Integer id) {
         Assignment deleted = findById(id);
-        logger.debug(deleted.toString());
         try (PreparedStatement statement
                      = connection.prepareStatement(DELETE)){
             statement.setInt(1, id);

@@ -12,8 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.mdekhtiarenko.views.commands.Constants.PATIENT_USER;
-import static com.mdekhtiarenko.views.commands.Constants.STAFF_USER;
+import static com.mdekhtiarenko.views.commands.Constants.USER;
 
 /**
  * Created by mykola.dekhtiarenko on 14.09.17.
@@ -22,7 +21,6 @@ import static com.mdekhtiarenko.views.commands.Constants.STAFF_USER;
 public class UrlFilter implements Filter {
     private static final String URL_TO_GO = "/rest/login";
 
-    private final Logger logger = Logger.getLogger(UrlFilter.class.getName());
     private List<String> restrictedUrls = new ArrayList<>();
 
 
@@ -39,12 +37,9 @@ public class UrlFilter implements Filter {
         String path = request.getRequestURI();
         path = path.replaceAll(".*/rest", "").replaceAll("\\d+", "");
         String url = method+":"+path;
-        logger.debug("Asked url: "+url);
 
         HttpSession session = ((HttpServletRequest) servletRequest).getSession();
-        if(restrictedUrls.contains(url)
-                &&session.getAttribute(STAFF_USER)==null
-                &&session.getAttribute(PATIENT_USER)==null){
+        if(restrictedUrls.contains(url)&&session.getAttribute(USER)==null){
 
             response.sendRedirect(request.getContextPath() + URL_TO_GO);
         }

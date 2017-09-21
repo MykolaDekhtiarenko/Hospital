@@ -14,7 +14,7 @@
     <title>${title}</title>
 </head>
 <body>
-    <fmt:message key="staff_homepage_header_label" var="header" />
-    <h1>${header}</h1>
+    <fmt:message key="staff_homepage_header_label" var="header_label" />
+    <h1>${header_label}</h1>
 </body>
 </html>

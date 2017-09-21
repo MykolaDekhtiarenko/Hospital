@@ -1,15 +1,15 @@
 package com.mdekhtiarenko.models.dao.impl;
 
 import com.mdekhtiarenko.models.dao.DiagnoseDao;
-import com.mdekhtiarenko.models.dao.PatientDao;
+import com.mdekhtiarenko.models.dao.UserDao;
 import com.mdekhtiarenko.models.dao.TreatmentHistoryDao;
 import com.mdekhtiarenko.models.dao.utils.EntityRetriever;
 import com.mdekhtiarenko.models.dao.utils.SecurityUtils;
-import com.mdekhtiarenko.models.entities.Patient;
+import com.mdekhtiarenko.models.entities.Diagnose;
+import com.mdekhtiarenko.models.entities.User;
 import com.mdekhtiarenko.models.entities.TreatmentHistory;
 import org.apache.log4j.Logger;
 
-import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,28 +21,28 @@ import java.util.List;
 /**
  * Created by mykola.dekhtiarenko on 28.08.17.
  */
-public class PatientDaoImpl implements PatientDao {
-    private static final String SELECT_ALL = "SELECT * FROM PATIENT";
-    private static final String SELECT_BY_ID = "SELECT * FROM PATIENT WHERE id = ?";
-    private static final String SELECT_BY_EMAIL = "SELECT * FROM PATIENT WHERE email = ?";
-    private static final String CREATE = "INSERT INTO PATIENT" +
-            " (email, password, firstName, lastName, phone, birthday)\n" +
-            "VALUES (?, ?, ?, ?, ?, ?);";
-    private static final String UPDATE = "UPDATE PATIENT SET " +
-            "email = ?, password = ?, firstName = ?, lastName = ?, phone = ?, birthday = ?" +
+public class UserDaoImpl implements UserDao {
+    private static final String SELECT_ALL = "SELECT * FROM USER";
+    private static final String SELECT_BY_ID = "SELECT * FROM USER WHERE id = ?";
+    private static final String SELECT_BY_EMAIL = "SELECT * FROM USER WHERE email = ?";
+    private static final String CREATE = "INSERT INTO USER" +
+            " (email, password, firstName, lastName, phone, birthday, role)\n" +
+            "VALUES (?, ?, ?, ?, ?, ?, ?);";
+    private static final String UPDATE = "UPDATE USER SET " +
+            "email = ?, password = ?, firstName = ?, lastName = ?, phone = ?, birthday = ?, role = ?" +
             "WHERE id = ?";
-    private static final String DELETE = "DELETE FROM PATIENT WHERE id = ?";
-    private static final String SELECT_TREATMENT_HISTORIES = "SELECT * FROM TREATMENTHISTORY WHERE Patient_id = ?";
+    private static final String DELETE = "DELETE FROM USER WHERE id = ?";
+    private static final String SELECT_TREATMENT_HISTORIES = "SELECT * FROM TREATMENTHISTORY WHERE User_id = ?";
+    private static final String SELECT_DIAGNOSES = "SELECT * FROM Diagnose WHERE Creator_id = ?";
 
-    private final Logger logger = Logger.getLogger(AssignmentDaoImpl.class.getName());
 
     private Connection connection;
-    public PatientDaoImpl(Connection connection) {
+    public UserDaoImpl(Connection connection) {
         this.connection = connection;
     }
 
-    public List<Patient> findAll() {
-        List<Patient> all = new ArrayList<>();
+    public List<User> findAll() {
+        List<User> all = new ArrayList<>();
         try (PreparedStatement statement
                      = connection.prepareStatement(SELECT_ALL)) {
             ResultSet rs = statement.executeQuery();
@@ -52,13 +52,11 @@ public class PatientDaoImpl implements PatientDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        logger.debug("List size: "+all.size());
         return all;
     }
 
-    public Patient findById(Integer id) {
-        Patient patient = null;
-        logger.debug("id: "+id);
+    public User findById(Integer id) {
+        User patient = null;
         try (PreparedStatement statement
                      = connection.prepareStatement(SELECT_BY_ID)) {
             statement.setInt(1, id);
@@ -69,12 +67,10 @@ public class PatientDaoImpl implements PatientDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        logger.debug(patient.toString());
         return patient;
     }
 
-    public boolean create(Patient patient) {
-        logger.debug(patient.toString());
+    public boolean create(User patient) {
         try (PreparedStatement statement
                      = connection.prepareStatement(CREATE)) {
             statement.setString(1, patient.getEmail());
@@ -83,6 +79,7 @@ public class PatientDaoImpl implements PatientDao {
             statement.setString(4, patient.getLastName());
             statement.setString(5, patient.getPhone());
             statement.setDate(6, patient.getBirthday());
+            statement.setString(7, patient.getRole().name());
             statement.execute();
 
         } catch (SQLException e) {
@@ -92,10 +89,8 @@ public class PatientDaoImpl implements PatientDao {
         return true;
     }
 
-    public Patient update(Patient infoForUpdate) {
-        Patient current = findById(infoForUpdate.getId());
-        logger.debug( "Current: "+current.toString());
-        logger.debug("To update: "+infoForUpdate.toString());
+    public User update(User infoForUpdate) {
+        User current = findById(infoForUpdate.getId());
         try (PreparedStatement statement
                      = connection.prepareStatement(UPDATE)) {
 
@@ -129,7 +124,12 @@ public class PatientDaoImpl implements PatientDao {
             else
                 statement.setDate(6, current.getBirthday());
 
-            statement.setInt(7, infoForUpdate.getId());
+            if(infoForUpdate.getRole()!=null)
+                statement.setString(7, infoForUpdate.getRole().name());
+            else
+                statement.setString(7, current.getRole().name());
+
+            statement.setInt(8, infoForUpdate.getId());
 
             statement.execute();
 
@@ -140,10 +140,8 @@ public class PatientDaoImpl implements PatientDao {
         return findById(infoForUpdate.getId());
     }
 
-    public Patient delete(Integer id) {
-        Patient deleted = findById(id);
-        logger.debug( "id: " + id);
-        logger.debug(deleted.toString());
+    public User delete(Integer id) {
+        User deleted = findById(id);
         try (PreparedStatement statement
                      = connection.prepareStatement(DELETE)) {
             statement.setInt(1, id);
@@ -154,14 +152,13 @@ public class PatientDaoImpl implements PatientDao {
         return deleted;
     }
 
-    public List<TreatmentHistory> getTreatmentHistoryListForPatient(Integer patientId,
-                                                                    TreatmentHistoryDao treatmentHistoryDao,
-                                                                    DiagnoseDao diagnoseDao) {
-        logger.debug("patientId: "+patientId);
+    public List<TreatmentHistory> getTreatmentHistoryList(Integer userId,
+                                                          TreatmentHistoryDao treatmentHistoryDao,
+                                                          DiagnoseDao diagnoseDao) {
         List<TreatmentHistory> treatmentHistoryList = new ArrayList<>();
         try (PreparedStatement statement
                      = connection.prepareStatement(SELECT_TREATMENT_HISTORIES)) {
-            statement.setInt(1, patientId);
+            statement.setInt(1, userId);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 TreatmentHistory treatmentHistory = EntityRetriever.retrieveTreatmentHistory(rs);
@@ -173,14 +170,28 @@ public class PatientDaoImpl implements PatientDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        logger.debug( "List size: "+treatmentHistoryList.size());
         return treatmentHistoryList;
     }
 
     @Override
-    public Patient getPatientByEmail(String email) {
-        logger.debug("Email: "+email);
-        Patient patient = null;
+    public List<Diagnose> getDiagnoseList(Integer userId) {
+        List<Diagnose> diagnoseList = new ArrayList<>();
+        try (PreparedStatement statement
+                     = connection.prepareStatement(SELECT_DIAGNOSES)) {
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                diagnoseList.add(EntityRetriever.retrieveDiagnose(rs));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return diagnoseList;
+    }
+
+    @Override
+    public User getPatientByEmail(String email) {
+        User patient = null;
         try (PreparedStatement statement
                      = connection.prepareStatement(SELECT_BY_EMAIL)){
 
@@ -188,7 +199,6 @@ public class PatientDaoImpl implements PatientDao {
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 patient = EntityRetriever.retrievePatient(rs);
-                logger.debug(patient.toString());
             }
         } catch (SQLException e) {
             e.printStackTrace();

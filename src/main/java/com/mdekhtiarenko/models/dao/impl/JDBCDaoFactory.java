@@ -34,13 +34,8 @@ public class JDBCDaoFactory extends DaoFactory {
     }
 
     @Override
-    public PatientDao createPatientDAO() {
-        return new PatientDaoImpl(getConnection());
-    }
-
-    @Override
-    public StaffDao createStaffDAO() {
-        return new StaffDaoImpl(getConnection());
+    public UserDao createPatientDAO() {
+        return new UserDaoImpl(getConnection());
     }
 
     @Override

@@ -1,7 +1,8 @@
 package com.mdekhtiarenko.views.commands;
 
-import com.mdekhtiarenko.models.entities.Patient;
-import com.mdekhtiarenko.services.PatientService;
+import com.mdekhtiarenko.models.entities.User;
+import com.mdekhtiarenko.models.enums.Role;
+import com.mdekhtiarenko.services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,19 +18,22 @@ import static com.mdekhtiarenko.views.commands.Constants.*;
 public class GetHomePage implements Command{
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) {
-        HttpSession session = req.getSession();
-        if(session.getAttribute(STAFF_USER)!=null)
-            return STAFF_HOMEPAGE;
-        else if(session.getAttribute(PATIENT_USER)!=null)
-            return prossesPatient(req, session);
-        else
-            return LOGIN_PAGE;
+        User currentUser = (User) req.getSession().getAttribute(USER);
+        if(currentUser!=null) {
+            if (currentUser.getRole()== Role.DOCTOR||currentUser.getRole()==Role.NURSE)
+                return STAFF_HOMEPAGE;
+            if (currentUser.getRole() == Role.PATIENT)
+                return prossesUser(req, req.getSession());
+            else
+                return LOGIN_PAGE;
+        }
+        else { return LOGIN_PAGE; }
     }
 
-    private String prossesPatient(HttpServletRequest req, HttpSession session){
-        PatientService service = PatientService.getInstance();
-        Patient patient = (Patient)session.getAttribute(PATIENT_USER);
-        Optional<Patient> fullPatientInfo = service.getFullPatientInfo(patient.getId());
+    private String prossesUser(HttpServletRequest req, HttpSession session){
+        UserService service = UserService.getInstance();
+        User patient = (User)session.getAttribute(USER);
+        Optional<User> fullPatientInfo = service.getFullPatientInfo(patient.getId());
         if(fullPatientInfo.isPresent())
             req.setAttribute("fullPatientInfo", fullPatientInfo.get());
         return PATIENT_HOMEPAGE;

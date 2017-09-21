@@ -7,8 +7,7 @@ public abstract class DaoFactory {
 
     public abstract AssignmentDao createAssignmentDAO();
     public abstract DiagnoseDao createDiagnoseDAO();
-    public abstract PatientDao createPatientDAO();
-    public abstract StaffDao createStaffDAO();
+    public abstract UserDao createPatientDAO();
     public abstract TreatmentHistoryDao createTreatmentHistoryDAO();
 
     public static DaoFactory getInstance() {
