@@ -12,7 +12,6 @@ public class SetLocale implements Command {
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        System.out.println("Changing locale");
         String localeToSet = req.getParameter("locale");
         req.getSession().setAttribute("language", localeToSet);
         return "";

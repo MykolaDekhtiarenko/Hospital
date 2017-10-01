@@ -6,6 +6,8 @@ import com.mdekhtiarenko.models.dao.DiagnoseDao;
 import com.mdekhtiarenko.models.entities.Diagnose;
 import com.mdekhtiarenko.models.entities.Response;
 import com.mdekhtiarenko.utils.Validator;
+import com.mdekhtiarenko.views.commands.Login;
+import org.apache.log4j.Logger;
 
 import java.util.ResourceBundle;
 
@@ -15,27 +17,14 @@ import java.util.ResourceBundle;
 public class DiagnoseService {
 
     private DaoFactory daoFactory;
+    private final Logger logger = Logger.getLogger(Login.class.getName());
 
 
     public void createDiagnose(Diagnose diagnose){
         DiagnoseDao diagnoseDao = daoFactory.createDiagnoseDAO();
         if(!diagnoseDao.create(diagnose)){
-            //TODO log
+            logger.info("Database error!");
         }
-
-//        ResourceBundle bundle = ResourceBundle.getBundle("Labels");
-//        if(!Validator.isFine(diagnose.getDiagnose(), Validator.TEXT)){
-//            return Response
-//                    .builder()
-//                    .errorMessage(bundle.getString("wrong_diagnose"))
-//                    .build();
-//        }
-//        if(diagnoseDao.create(diagnose))
-//            return Response.builder().build();
-//        return Response
-//                .builder()
-//                .errorMessage(bundle.getString("db_problem"))
-//                .build();
     }
 
 

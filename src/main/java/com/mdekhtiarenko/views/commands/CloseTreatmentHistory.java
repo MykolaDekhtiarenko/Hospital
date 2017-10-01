@@ -4,6 +4,7 @@ import com.mdekhtiarenko.models.entities.Response;
 import com.mdekhtiarenko.models.entities.TreatmentHistory;
 import com.mdekhtiarenko.services.TreatmentHistoryService;
 import com.mdekhtiarenko.utils.Validator;
+import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +18,8 @@ import java.util.ResourceBundle;
 public class CloseTreatmentHistory implements Command {
     private TreatmentHistoryService treatmentHistoryService;
     private ResourceBundle bundle;
+    private final Logger logger = Logger.getLogger(Login.class.getName());
+
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         TreatmentHistory treatmentHistory = TreatmentHistory.builder()
@@ -26,9 +29,11 @@ public class CloseTreatmentHistory implements Command {
         String error = null;
         if(Validator.isFine(treatmentHistory.getConclusion(), Validator.TEXT)){
             treatmentHistoryService.closeTreatmentHistory(treatmentHistory);
+            logger.info(treatmentHistory.toString() +" was closed;");
         }
         else{
             error = bundle.getString("patient_detailed_info.no_conclusion_error");
+            logger.info(treatmentHistory.toString() +" was not closed;");
         }
 
         if(error!=null)

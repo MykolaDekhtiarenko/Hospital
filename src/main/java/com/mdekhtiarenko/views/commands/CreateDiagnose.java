@@ -7,6 +7,7 @@ import com.mdekhtiarenko.models.entities.User;
 import com.mdekhtiarenko.models.enums.AssignmentType;
 import com.mdekhtiarenko.services.DiagnoseService;
 import com.mdekhtiarenko.utils.Validator;
+import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +25,8 @@ import static com.mdekhtiarenko.views.Constants.USER;
 public class CreateDiagnose implements Command {
     private DiagnoseService diagnoseService;
     private ResourceBundle bundle;
+    private final Logger logger = Logger.getLogger(Login.class.getName());
+
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         int treatmentHistoryId = Integer.valueOf(req.getParameter("treatmentHistoryId"));
@@ -32,12 +35,14 @@ public class CreateDiagnose implements Command {
 
         String error = null;
         if(Validator.isFine(diagnoseText, Validator.TEXT)) {
-            diagnoseService.createDiagnose(Diagnose
+            Diagnose diagnose = Diagnose
                     .builder()
                     .diagnose(diagnoseText)
                     .treatmentHistoryId(treatmentHistoryId)
                     .creatorId(user.getId())
-                    .build());
+                    .build();
+            diagnoseService.createDiagnose(diagnose);
+            logger.info(diagnose.toString() +" was created by "+user.toString());
         }
         else {
             error = bundle.getString("wrong_diagnose");

@@ -5,6 +5,8 @@ import com.mdekhtiarenko.models.dao.DaoFactory;
 import com.mdekhtiarenko.models.entities.Assignment;
 import com.mdekhtiarenko.models.entities.Response;
 import com.mdekhtiarenko.utils.Validator;
+import com.mdekhtiarenko.views.commands.Login;
+import org.apache.log4j.Logger;
 
 import java.util.List;
 import java.util.ResourceBundle;
@@ -15,12 +17,14 @@ import java.util.ResourceBundle;
 public class AssignmentService {
 
     private DaoFactory daoFactory;
+    private final Logger logger = Logger.getLogger(Login.class.getName());
 
     public void createAssignmentList(List<Assignment> assignmentList, int diagnoseId){
         AssignmentDao assignmentDao = daoFactory.createAssignmentDAO();
         for (Assignment assignment: assignmentList){
-                assignment.setDiagnoseId(diagnoseId);
-                assignmentDao.create(assignment);
+            assignment.setDiagnoseId(diagnoseId);
+            assignmentDao.create(assignment);
+            logger.info("Created: "+assignment);
         }
     }
 

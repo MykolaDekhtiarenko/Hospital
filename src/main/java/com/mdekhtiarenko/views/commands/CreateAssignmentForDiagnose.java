@@ -4,6 +4,8 @@ import com.mdekhtiarenko.models.entities.Assignment;
 import com.mdekhtiarenko.models.enums.AssignmentType;
 import com.mdekhtiarenko.services.AssignmentService;
 import com.mdekhtiarenko.utils.Validator;
+import org.apache.log4j.Logger;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +21,7 @@ import java.util.ResourceBundle;
 public class CreateAssignmentForDiagnose implements Command{
     private AssignmentService service;
     private  ResourceBundle bundle;
+    private final Logger logger = Logger.getLogger(Login.class.getName());
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -41,6 +44,7 @@ public class CreateAssignmentForDiagnose implements Command{
             req.setAttribute("error", error);
 
         service.createAssignmentList(checkedAssignmentList, diagnoseId);
+        logger.info(checkedAssignmentList.size()+" out of "+assignmentList.size()+" assignments were created.");
         return GetPatientDetailedInfo.getInstance().execute(req, res);
     }
 
