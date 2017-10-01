@@ -8,9 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import java.util.List;
 import java.util.Optional;
 
-import static com.mdekhtiarenko.views.commands.Constants.*;
+import static com.mdekhtiarenko.views.Constants.*;
 
 /**
  * Created by mykola.dekhtiarenko on 15.09.17.
@@ -21,16 +22,16 @@ public class GetHomePage implements Command{
         User currentUser = (User) req.getSession().getAttribute(USER);
         if(currentUser!=null) {
             if (currentUser.getRole()== Role.DOCTOR||currentUser.getRole()==Role.NURSE)
-                return STAFF_HOMEPAGE;
+                return prossesStaff(req, req.getSession());
             if (currentUser.getRole() == Role.PATIENT)
-                return prossesUser(req, req.getSession());
+                return prossesPatient(req, req.getSession());
             else
                 return LOGIN_PAGE;
         }
         else { return LOGIN_PAGE; }
     }
 
-    private String prossesUser(HttpServletRequest req, HttpSession session){
+    private String prossesPatient(HttpServletRequest req, HttpSession session){
         UserService service = UserService.getInstance();
         User patient = (User)session.getAttribute(USER);
         Optional<User> fullPatientInfo = service.getFullPatientInfo(patient.getId());
@@ -38,4 +39,25 @@ public class GetHomePage implements Command{
             req.setAttribute("fullPatientInfo", fullPatientInfo.get());
         return PATIENT_HOMEPAGE;
     }
+
+    private String prossesStaff(HttpServletRequest req, HttpSession session){
+        UserService service = UserService.getInstance();
+//        User patient = (User)session.getAttribute(USER);
+        List<User> sick = service.getSick();
+        req.setAttribute("patientList", sick);
+        return STAFF_HOMEPAGE;
+    }
+
+    private GetHomePage() {
+    }
+
+    //singelton pattern
+    private static class Holder{
+        private static GetHomePage INSTANCE = new GetHomePage();
+    }
+
+    public static GetHomePage getInstance(){
+        return GetHomePage.Holder.INSTANCE;
+    }
+
 }

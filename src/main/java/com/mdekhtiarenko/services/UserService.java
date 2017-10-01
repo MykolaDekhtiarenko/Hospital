@@ -5,6 +5,7 @@ import com.mdekhtiarenko.models.dao.UserDao;
 import com.mdekhtiarenko.models.dao.utils.SecurityUtils;
 import com.mdekhtiarenko.models.entities.User;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -14,7 +15,7 @@ public class UserService {
 
     private DaoFactory daoFactory;
 
-    UserService(DaoFactory instance){
+    private UserService(DaoFactory instance){
         daoFactory = instance;
     }
 
@@ -38,6 +39,15 @@ public class UserService {
         return patient;
     }
 
+    public List<User> getSick(){
+        UserDao dao = daoFactory.createPatientDAO();
+        return dao.getSick();
+    }
+
+    public List<User> getAll(){
+        UserDao dao = daoFactory.createPatientDAO();
+        return dao.findAll();
+    }
 
     //singelton pattern
     private static class Holder{

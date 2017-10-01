@@ -8,10 +8,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
+    <c:if test="${not empty language}">
+        <fmt:setLocale value="${language}" />
+    </c:if>
+    <fmt:setBundle basename="Labels"/>
     <title>Title</title>
 </head>
 <body>
-    <h1>Во фсем виноват Нэвэльный!</h1>
+    <%--<h1>Во фсем виноват Нэвэльный!</h1>--%>
+    <h1>Уккщк зфпу</h1>
     <br>
     <a href="/">Index</a>
 

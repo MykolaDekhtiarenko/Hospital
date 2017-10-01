@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static com.mdekhtiarenko.views.commands.Constants.*;
+import static com.mdekhtiarenko.views.Constants.*;
 
 /**
  * Created by mykola.dekhtiarenko on 13.09.17.
@@ -22,6 +22,7 @@ public class Login implements Command{
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         String email = request.getParameter(PARAM_LOGIN);
         String password = request.getParameter(PARAM_PASSWORD);
         if( email != null && password != null ){
@@ -29,12 +30,12 @@ public class Login implements Command{
             if(user.isPresent()){
                 logger.info("User: "+email+" logged in!");
                 request.getSession().setAttribute(USER, user.get());
-                return new GetHomePage().execute(request, response);
+                return GetHomePage.getInstance().execute(request, response);
             }
         }
         ResourceBundle labelsBundle = ResourceBundle.getBundle("Labels");
         request.setAttribute("unableToLogin", labelsBundle.getString("unable_to_login"));
-        return new GetLoginPage().execute(request, response);
+        return GetLoginPage.getInstance().execute(request, response);
     }
     
 
@@ -42,6 +43,19 @@ public class Login implements Command{
         UserService service = UserService.getInstance();
         return service.login(email, password);
     }
+
+    private Login() {
+    }
+
+    //singelton pattern
+    private static class Holder{
+        private static Login INSTANCE = new Login();
+    }
+
+    public static Login getInstance(){
+        return Login.Holder.INSTANCE;
+    }
+
 
 
 }

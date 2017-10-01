@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.mdekhtiarenko.views.commands.Constants.INDEX_PAGE;
+import static com.mdekhtiarenko.views.Constants.INDEX_PAGE;
 
 /**
  * Created by mykola.dekhtiarenko on 13.09.17.
@@ -26,10 +26,22 @@ public class AppController extends HttpServlet{
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        urls.put("POST:/login", new Login());
-        urls.put("GET:/login", new GetLoginPage());
-        urls.put("GET:/home", new GetHomePage());
-        urls.put("GET:/error", new Error404());
+        urls.put("POST:/login", Login.getInstance());
+        urls.put("GET:/login", GetLoginPage.getInstance());
+        urls.put("GET:/logout", Logout.getInstance());
+        urls.put("POST:/logout", Logout.getInstance());
+
+        urls.put("GET:/home", GetHomePage.getInstance());
+        urls.put("GET:/patient/", GetPatientDetailedInfo.getInstance());
+        urls.put("GET:/error", Error404.getInstance());
+
+        urls.put("POST:/assignment/create", CreateAssignmentForDiagnose.getInstance());
+        urls.put("POST:/diagnose/create", CreateDiagnose.getInstance());
+        urls.put("POST:/treatmentHistory/create", CreateTreatmentHistory.getInstance());
+        urls.put("POST:/treatmentHistory/update", CloseTreatmentHistory.getInstance());
+        urls.put("GET:/patients", GetAllPatientsInfo.getInstance());
+        urls.put("POST:/locale", SetLocale.getInstance());
+
         super.init(config);
     }
 
@@ -48,7 +60,6 @@ public class AppController extends HttpServlet{
         String path = request.getRequestURI();
         path = path.replaceAll(".*/rest", "").replaceAll("\\d+", "");
         String url = method+":"+path;
-        logger.debug("Asked url in controller: "+url);
         Command command = urls.getOrDefault(url, (req, resp)->INDEX_PAGE);
         String viewPage = command.execute(request, response);
         request.getRequestDispatcher(viewPage)

@@ -34,6 +34,10 @@ public class UserDaoImpl implements UserDao {
     private static final String DELETE = "DELETE FROM USER WHERE id = ?";
     private static final String SELECT_TREATMENT_HISTORIES = "SELECT * FROM TREATMENTHISTORY WHERE User_id = ?";
     private static final String SELECT_DIAGNOSES = "SELECT * FROM Diagnose WHERE Creator_id = ?";
+    private static final String SELECT_SICK = "SELECT DISTINCT User.id, email, password, firstName, lastName, phone, birthday, role\n" +
+            "FROM USER JOIN TreatmentHistory ON User.id = TreatmentHistory.User_id\n" +
+            "AND TreatmentHistory.conclusion IS NULL";
+
 
 
     private Connection connection;
@@ -204,6 +208,21 @@ public class UserDaoImpl implements UserDao {
             e.printStackTrace();
         }
         return patient;
+    }
+
+    @Override
+    public List<User> getSick() {
+        List<User> sick = new ArrayList<>();
+        try (PreparedStatement statement
+                     = connection.prepareStatement(SELECT_SICK)) {
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                sick.add(EntityRetriever.retrievePatient(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return sick;
     }
 
     @Override
