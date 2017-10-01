@@ -41,6 +41,7 @@ public class AppController extends HttpServlet{
         urls.put("POST:/treatmentHistory/update", CloseTreatmentHistory.getInstance());
         urls.put("GET:/patients", GetAllPatientsInfo.getInstance());
         urls.put("POST:/locale", SetLocale.getInstance());
+        urls.put("POST:/assignment/update", ExecuteAssignment.getInstance());
 
         super.init(config);
     }

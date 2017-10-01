@@ -8,7 +8,10 @@ import com.mdekhtiarenko.utils.Validator;
 import com.mdekhtiarenko.views.commands.Login;
 import org.apache.log4j.Logger;
 
+import java.sql.Date;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -26,6 +29,19 @@ public class AssignmentService {
             assignmentDao.create(assignment);
             logger.info("Created: "+assignment);
         }
+    }
+
+    public void executeAssignment(int assignmentId){
+        Assignment assignment = Assignment
+                .builder()
+                .id(assignmentId)
+                .dateOfExecution(new Date(Calendar.getInstance().getTimeInMillis()))
+                .build();
+        daoFactory.createAssignmentDAO().update(assignment);
+    }
+
+    public Optional<Assignment> getById(int assignmentId){
+        return Optional.ofNullable(daoFactory.createAssignmentDAO().findById(assignmentId));
     }
 
     private AssignmentService(DaoFactory instance){

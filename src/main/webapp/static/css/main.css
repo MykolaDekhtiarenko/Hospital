@@ -46,3 +46,16 @@ a:hover{
     margin-top: 5px;
     margin-bottom: 5px;
 }
+.inline-form {
+    display: inline;
+}
+.strike{
+    text-decoration: line-through;
+}
+.execute{
+    color: #ffc71f;
+}
+
+.execute:hover{
+    color: #ffc107;
+}

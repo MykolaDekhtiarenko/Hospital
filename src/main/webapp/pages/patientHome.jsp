@@ -19,7 +19,7 @@
     <fmt:message key="patient_homepage_title" var="title"/>
     <title>${title}</title>
     <link rel="stylesheet" href="/static/css/main.css">
-    <script src="/static/javascript/main.js"></script>
+
 </head>
 <body>
 <fmt:message key="patient_homepage_header_label" var="homepage_header"/>
@@ -29,6 +29,7 @@
 <fmt:message key="assignment_done" var="assignment_done"/>
 
 <c:import url="components/navbar.jsp"/>
+<script src="/static/javascript/main.js"></script>
 
 <center><h1>${homepage_header}</h1></center>
 <div class="container">
@@ -105,10 +106,34 @@
                                 </c:if>
                                 <ol>
                                     <c:forEach items="${diagnose.assignmentList}" var="assignment">
-                                        <li>${assignment.description}(${assignment.type})
-                                            <c:if test="${not empty assignment.dateOfExecution}">
-                                                ${assignment_done}
+                                        <li>
+                                            <span class="<c:if test="${not empty assignment.dateOfExecution}">strike</c:if>">${assignment.description}</span>
+
+                                            <c:if test="${empty assignment.dateOfExecution and empty treatmentHistory.conclusion }">
+                                                <c:if test="${user.role == 'NURSE' or user.role == 'DOCTOR'}">
+                                                    <c:if test="${assignment.type == 'MEDICINE' or assignment.type =='PROCEDURE'}">
+                                                        <fmt:message key="assignment.execute" var="execute"/>
+                                                        <form class="inline-form" method="post" action="/rest/assignment/update">
+                                                            <input type="hidden" name="assignmentId" value="${assignment.id}">
+                                                            <input type="hidden" name="userId" value="${fullPatientInfo.id}">
+                                                            <input type="submit" role="button" class="btn btn-link execute" value="${execute}">
+                                                        </form>
+                                                    </c:if>
+                                                </c:if>
+                                                <c:if test="${user.role == 'DOCTOR'}">
+                                                    <c:if test="${assignment.type == 'SURGERY'}">
+                                                        <fmt:message key="assignment.execute" var="execute"/>
+                                                        <form class="inline-form" method="post" action="/rest/assignment/update">
+                                                            <input type="hidden" name="assignmentId" value="${assignment.id}">
+                                                            <input type="hidden" name="userId" value="${fullPatientInfo.id}">
+                                                            <input type="submit" role="button" class="btn btn-link execute" value="${execute}">
+                                                        </form>
+                                                    </c:if>
+                                                </c:if>
                                             </c:if>
+
+
+
                                         </li>
                                     </c:forEach>
                                 </ol>
