@@ -74,7 +74,6 @@ public class DiagnoseDaoImpl implements DiagnoseDao {
             statement.execute();
 
         } catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
         return true;

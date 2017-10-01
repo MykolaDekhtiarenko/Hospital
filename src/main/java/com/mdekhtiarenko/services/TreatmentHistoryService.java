@@ -30,26 +30,10 @@ public class TreatmentHistoryService {
         return daoFactory.createTreatmentHistoryDAO().create(treatmentHistory);
     }
 
-    public Response closeTreatmentHistory(TreatmentHistory treatmentHistory){
+    public TreatmentHistory closeTreatmentHistory(TreatmentHistory treatmentHistory){
         TreatmentHistoryDao dao = daoFactory.createTreatmentHistoryDAO();
-        if(!treatmentHistory.getConclusion().isEmpty()){
-            treatmentHistory.setEndDate(new Date(Calendar.getInstance().getTimeInMillis()));
-            dao.update(treatmentHistory);
-            return Response
-                    .builder()
-                    .result(Optional.ofNullable(dao.findById(treatmentHistory.getId())))
-                    .build();
-        }
-        else{
-            ResourceBundle resourceBundle = ResourceBundle.getBundle(
-                    "Labels", Locale.getDefault());
-            return Response
-                    .builder()
-                    .errorMessage(resourceBundle.getString("patient_detailed_info.no_conclusion_error"))
-                    .build();
-        }
-
-
+        treatmentHistory.setEndDate(new Date(Calendar.getInstance().getTimeInMillis()));
+        return dao.update(treatmentHistory);
     }
 
 

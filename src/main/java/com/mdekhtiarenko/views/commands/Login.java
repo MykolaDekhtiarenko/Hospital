@@ -17,7 +17,8 @@ import static com.mdekhtiarenko.views.Constants.*;
  * Created by mykola.dekhtiarenko on 13.09.17.
  */
 public class Login implements Command{
-
+    private ResourceBundle bundle;
+    private UserService userService;
     private final Logger logger = Logger.getLogger(Login.class.getName());
 
     @Override
@@ -26,25 +27,23 @@ public class Login implements Command{
         String email = request.getParameter(PARAM_LOGIN);
         String password = request.getParameter(PARAM_PASSWORD);
         if( email != null && password != null ){
-            Optional<User> user = patientLogin(email, password);
+            Optional<User> user = userService.login(email, password);
             if(user.isPresent()){
                 logger.info("User: "+email+" logged in!");
                 request.getSession().setAttribute(USER, user.get());
                 return GetHomePage.getInstance().execute(request, response);
             }
         }
-        ResourceBundle labelsBundle = ResourceBundle.getBundle("Labels");
-        request.setAttribute("unableToLogin", labelsBundle.getString("unable_to_login"));
+
+        request.setAttribute("unableToLogin", bundle.getString("unable_to_login"));
         return GetLoginPage.getInstance().execute(request, response);
     }
     
 
-    private Optional<User> patientLogin(String email, String password){
-        UserService service = UserService.getInstance();
-        return service.login(email, password);
-    }
 
     private Login() {
+        userService = UserService.getInstance();
+        bundle = ResourceBundle.getBundle("Labels");
     }
 
     //singelton pattern

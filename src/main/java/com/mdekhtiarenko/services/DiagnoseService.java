@@ -16,21 +16,26 @@ public class DiagnoseService {
 
     private DaoFactory daoFactory;
 
-    public Response createDiagnose(Diagnose diagnose){
+
+    public void createDiagnose(Diagnose diagnose){
         DiagnoseDao diagnoseDao = daoFactory.createDiagnoseDAO();
-        ResourceBundle bundle = ResourceBundle.getBundle("Labels");
-        if(!Validator.isFine(diagnose.getDiagnose(), Validator.TEXT)){
-            return Response
-                    .builder()
-                    .errorMessage(bundle.getString("wrong_diagnose"))
-                    .build();
+        if(!diagnoseDao.create(diagnose)){
+            //TODO log
         }
-        if(diagnoseDao.create(diagnose))
-            return Response.builder().build();
-        return Response
-                .builder()
-                .errorMessage(bundle.getString("db_problem"))
-                .build();
+
+//        ResourceBundle bundle = ResourceBundle.getBundle("Labels");
+//        if(!Validator.isFine(diagnose.getDiagnose(), Validator.TEXT)){
+//            return Response
+//                    .builder()
+//                    .errorMessage(bundle.getString("wrong_diagnose"))
+//                    .build();
+//        }
+//        if(diagnoseDao.create(diagnose))
+//            return Response.builder().build();
+//        return Response
+//                .builder()
+//                .errorMessage(bundle.getString("db_problem"))
+//                .build();
     }
 
 

@@ -17,7 +17,9 @@ import java.util.ResourceBundle;
  * Created by mykola.dekhtiarenko on 28.09.17.
  */
 public class CreateAssignmentForDiagnose implements Command{
-    AssignmentService service;
+    private AssignmentService service;
+    private  ResourceBundle bundle;
+
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         int diagnoseId = Integer.valueOf(req.getParameter("diagnoseId"));
@@ -27,7 +29,6 @@ public class CreateAssignmentForDiagnose implements Command{
         for(Assignment assignment:assignmentList) {
             if (!Validator.isFine(assignment.getDescription(), Validator.TEXT)) {
                 if (error == null) {
-                    ResourceBundle bundle = ResourceBundle.getBundle("Labels");
                     error = bundle.getString("patient_detailed_info.inappropriate_assignment");
                 }
             }
@@ -69,6 +70,7 @@ public class CreateAssignmentForDiagnose implements Command{
 
 
     private CreateAssignmentForDiagnose() {
+        bundle = ResourceBundle.getBundle("Labels");
         service = AssignmentService.getInstance();
     }
 

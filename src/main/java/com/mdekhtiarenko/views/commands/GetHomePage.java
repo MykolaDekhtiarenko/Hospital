@@ -17,6 +17,8 @@ import static com.mdekhtiarenko.views.Constants.*;
  * Created by mykola.dekhtiarenko on 15.09.17.
  */
 public class GetHomePage implements Command{
+    private UserService userService;
+
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) {
         User currentUser = (User) req.getSession().getAttribute(USER);
@@ -32,23 +34,21 @@ public class GetHomePage implements Command{
     }
 
     private String prossesPatient(HttpServletRequest req, HttpSession session){
-        UserService service = UserService.getInstance();
         User patient = (User)session.getAttribute(USER);
-        Optional<User> fullPatientInfo = service.getFullPatientInfo(patient.getId());
+        Optional<User> fullPatientInfo = userService.getFullPatientInfo(patient.getId());
         if(fullPatientInfo.isPresent())
             req.setAttribute("fullPatientInfo", fullPatientInfo.get());
         return PATIENT_HOMEPAGE;
     }
 
     private String prossesStaff(HttpServletRequest req, HttpSession session){
-        UserService service = UserService.getInstance();
-//        User patient = (User)session.getAttribute(USER);
-        List<User> sick = service.getSick();
+        List<User> sick = userService.getSick();
         req.setAttribute("patientList", sick);
         return STAFF_HOMEPAGE;
     }
 
     private GetHomePage() {
+        userService = UserService.getInstance();
     }
 
     //singelton pattern
