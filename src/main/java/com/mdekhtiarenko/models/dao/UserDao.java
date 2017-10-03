@@ -14,6 +14,6 @@ public interface UserDao extends GenericDao<User> {
                                                    TreatmentHistoryDao treatmentHistoryDao,
                                                    DiagnoseDao diagnoseDao);
     List<Diagnose> getDiagnoseList(Integer userId);
-    User getPatientByEmail(String email);
+    User findByEmail(String email);
     List<User> getSick();
 }

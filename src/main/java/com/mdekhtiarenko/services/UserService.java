@@ -1,5 +1,6 @@
 package com.mdekhtiarenko.services;
 
+import com.mdekhtiarenko.exceptions.EmailExistsException;
 import com.mdekhtiarenko.models.dao.DaoFactory;
 import com.mdekhtiarenko.models.dao.UserDao;
 import com.mdekhtiarenko.models.dao.utils.SecurityUtils;
@@ -24,14 +25,14 @@ public class UserService {
 
     public Optional<User> login(String email, String password){
         logger.info(email+" trying to log in.");
-        UserDao dao = daoFactory.createPatientDAO();
-        return Optional.ofNullable(dao.getPatientByEmail(email))
+        UserDao dao = daoFactory.createUserDAO();
+        return Optional.ofNullable(dao.findByEmail(email))
                 .filter( patient -> SecurityUtils.decode(password).equals(patient.getPassword()));
     }
 
     public Optional<User> getFullPatientInfo(int id){
         logger.info("Trying to get info about user with id "+id);
-        UserDao dao = daoFactory.createPatientDAO();
+        UserDao dao = daoFactory.createUserDAO();
         Optional<User> patient = Optional.ofNullable(dao.findById(id));
         if(patient.isPresent()) {
             patient.get()
@@ -44,13 +45,23 @@ public class UserService {
         return patient;
     }
 
+    public void createUser(User user) throws EmailExistsException {
+        UserDao userDao = daoFactory.createUserDAO();
+        if(!(userDao.findByEmail(user.getEmail())!=null)){
+            throw new EmailExistsException("User with email "+user.getEmail()+" already exists!");
+        }
+        else{
+            userDao.create(user);
+        }
+    }
+
     public List<User> getSick(){
-        UserDao dao = daoFactory.createPatientDAO();
+        UserDao dao = daoFactory.createUserDAO();
         return dao.getSick();
     }
 
     public List<User> getAll(){
-        UserDao dao = daoFactory.createPatientDAO();
+        UserDao dao = daoFactory.createUserDAO();
         return dao.findAll();
     }
 

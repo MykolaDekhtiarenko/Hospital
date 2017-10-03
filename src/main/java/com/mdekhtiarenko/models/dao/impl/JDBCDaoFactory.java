@@ -34,7 +34,7 @@ public class JDBCDaoFactory extends DaoFactory {
     }
 
     @Override
-    public UserDao createPatientDAO() {
+    public UserDao createUserDAO() {
         return new UserDaoImpl(getConnection());
     }
 

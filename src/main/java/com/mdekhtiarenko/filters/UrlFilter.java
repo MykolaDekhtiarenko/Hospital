@@ -35,6 +35,8 @@ public class UrlFilter implements Filter {
         staffOnlyUrls.add("POST:/assignment/create");
         staffOnlyUrls.add("GET:/patients");
         staffOnlyUrls.add("POST:/assignment/update");
+        staffOnlyUrls.add("GET:/user");
+        staffOnlyUrls.add("POST:/user/create");
 
 
 

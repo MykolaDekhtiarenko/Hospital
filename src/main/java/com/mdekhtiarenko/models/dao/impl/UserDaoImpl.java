@@ -194,7 +194,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User getPatientByEmail(String email) {
+    public User findByEmail(String email) {
         User patient = null;
         try (PreparedStatement statement
                      = connection.prepareStatement(SELECT_BY_EMAIL)){

@@ -43,6 +43,10 @@ public class AppController extends HttpServlet{
         urls.put("POST:/locale", SetLocale.getInstance());
         urls.put("POST:/assignment/update", ExecuteAssignment.getInstance());
 
+        urls.put("GET:/user", GetRegistrationPage.getInstance());
+        urls.put("POST:/user/create", CreateUser.getInstance());
+
+
         super.init(config);
     }
 
