@@ -10,15 +10,29 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Create user</title>
     <c:if test="${not empty language}">
         <fmt:setLocale value="${language}" />
     </c:if>
     <fmt:setBundle basename="Labels"/>
+    <fmt:message key="navbar.add_user" var="add_user"/>
+    <title>${add_user}</title>
     <link rel="stylesheet" href="/static/css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.js"></script>
 </head>
 <body>
 <c:import url="components/navbar.jsp"/>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('select').niceSelect();
+    });
+</script>
+
 
 <div class="registration-page">
     <div class="form">
@@ -28,14 +42,22 @@
             <input type="text" name="firstName" placeholder="first name"/>
             <input type="text" name="lastName" placeholder="last name"/>
             <input type="text" name="phone" placeholder="phone"/>
-            <input type="text" name="birthday" placeholder="your birthday"/>
-            <input type="text" name="role" placeholder="role"/>
+            <select name="role" class="selectpicker">
+                <option value="PATIENT">Patient</option>
+                <option value="NURSE">Nurse</option>
+                <option value="DOCTOR">Doctor</option>
+            </select>
 
-
+            <input class="datepicker" name="birthday" placeholder="birthday" data-date-format="mm/dd/yyyy"/>
+            <script>
+                $('.datepicker').datepicker({
+                 startDate: '-3d'
+                });
+            </script>
 
 
             <input type="submit" class="btn btn-info button margin-zero">
-            <p class="message error"> <c:out value="${unableToLogin}"/></p>
+            <p class="message error"> <c:out value="${errorResp.errorMessage}"/></p>
         </form>
     </div>
 </div>

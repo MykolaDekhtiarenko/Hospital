@@ -23,17 +23,35 @@
         </button>
 
         <fmt:message key="navbar.home_page" var="home_page"/>
+        <fmt:message key="staffpage.sick_patients_title" var="sick_patients_title"/>
+
         <fmt:message key="navbar.patient_list_page" var="patient_list_page"/>
+        <fmt:message key="navbar.add_user" var="add_user"/>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link " href="/rest/home">${home_page}</a>
+                    <c:if test="${not empty user}">
+                        <c:if test="${user.role == 'NURSE' or user.role == 'DOCTOR'}">
+                            <a class="nav-link " href="/rest/home">${sick_patients_title}</a>
+                        </c:if>
+                        <c:if test="${user.role == 'PATIENT'}">
+                            <a class="nav-link " href="/rest/home">${home_page}</a>
+                        </c:if>
+                    </c:if>
                 </li>
                 <c:if test="${not empty user}">
                     <c:if test="${user.role == 'NURSE' or user.role == 'DOCTOR'}">
                         <li class="nav-item">
                             <a class="nav-link" href="/rest/patients">${patient_list_page}</a>
+                        </li>
+                    </c:if>
+                </c:if>
+
+                <c:if test="${not empty user}">
+                    <c:if test="${user.role == 'DOCTOR'}">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/rest/user">${add_user}</a>
                         </li>
                     </c:if>
                 </c:if>

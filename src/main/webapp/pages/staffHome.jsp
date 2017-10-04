@@ -7,7 +7,6 @@
         <fmt:setLocale value="${language}" />
     </c:if>
     <fmt:setBundle basename="Labels"/>
-    <fmt:message key="staff_homepage_title" var="title" />
     <title>${title}</title>
 </head>
 <body>
@@ -22,7 +21,7 @@
 
     <c:import url="components/navbar.jsp"/>
 
-    <center><h1>${header_label}</h1></center>
+    <center><h1>${title}</h1></center>
     <div class="container">
         <table class="table table-striped">
             <tr>

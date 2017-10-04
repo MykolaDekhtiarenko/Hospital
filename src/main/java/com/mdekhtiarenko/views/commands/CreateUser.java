@@ -31,9 +31,6 @@ public class CreateUser implements Command {
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        String birthdayStr = req.getParameter("birthday");
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
         User userToCreate = User
                 .builder()
                 .email(req.getParameter("email"))
@@ -41,23 +38,25 @@ public class CreateUser implements Command {
                 .firstName(req.getParameter("firstName"))
                 .lastName(req.getParameter("lastName"))
                 .phone(req.getParameter("phone"))
-//                .birthday(new Date(sdf.parse(birthdayStr).getTime()))
                 .role(Role.valueOf(req.getParameter("role")))
                 .build();
 
         Response response = validateUser(userToCreate);
-        if(!response.hasErrors()) {
+        if (!response.hasErrors()) {
             try {
+                userToCreate.setBirthday(retrieveDate(req.getParameter("birthday")));
                 userService.createUser(userToCreate);
+                return GetHomePage.getInstance().execute(req, res);
             } catch (EmailExistsException e) {
                 response.addError(bundle.getString("user.existing_email"));
                 req.setAttribute("errorResp", response);
+            } catch (ParseException e) {
+                response.addError(bundle.getString("user.inappropriate_date"));
+                req.setAttribute("errorResp", response);
             }
-        }
-        else {
+        } else {
             req.setAttribute("errorResp", response);
         }
-
         return CREATE_USER_PAGE;
     }
 
@@ -68,7 +67,7 @@ public class CreateUser implements Command {
                 .build();
         if(!isFine(user.getEmail(), Validator.EMAIL))
             response.addError(bundle.getString("user.wrong_email"));
-        if(!isFine(user.getPassword(), Validator.TEXT))
+        if(!isFine(user.getPassword(), Validator.PASSWORD))
             response.addError(bundle.getString("user.wrong_password"));
         if(!isFine(user.getFirstName(), TEXT))
             response.addError(bundle.getString("user.wrong_firstname"));
@@ -79,9 +78,16 @@ public class CreateUser implements Command {
         return response;
     }
 
+    private Date retrieveDate(String date) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        java.util.Date uDate  = sdf.parse(date);
+        return new Date(uDate.getTime());
+    }
+
 
 
     private CreateUser() {
+        userService = UserService.getInstance();
         bundle = ResourceBundle.getBundle("Labels");
     }
 

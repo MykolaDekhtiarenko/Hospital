@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.ResourceBundle;
 
 import static com.mdekhtiarenko.views.Constants.*;
 
@@ -18,6 +19,7 @@ import static com.mdekhtiarenko.views.Constants.*;
  */
 public class GetHomePage implements Command{
     private UserService userService;
+    private ResourceBundle bundle;
 
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) {
@@ -43,15 +45,16 @@ public class GetHomePage implements Command{
 
     private String prossesStaff(HttpServletRequest req, HttpSession session){
         List<User> sick = userService.getSick();
+        req.setAttribute("title", bundle.getString("staffpage.sick_patients_title"));
         req.setAttribute("patientList", sick);
         return STAFF_HOMEPAGE;
     }
 
     private GetHomePage() {
         userService = UserService.getInstance();
+        bundle = ResourceBundle.getBundle("Labels");
     }
 
-    //singelton pattern
     private static class Holder{
         private static GetHomePage INSTANCE = new GetHomePage();
     }

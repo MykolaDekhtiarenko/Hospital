@@ -47,7 +47,7 @@ public class UserService {
 
     public void createUser(User user) throws EmailExistsException {
         UserDao userDao = daoFactory.createUserDAO();
-        if(!(userDao.findByEmail(user.getEmail())!=null)){
+        if(!(userDao.findByEmail(user.getEmail())==null)){
             throw new EmailExistsException("User with email "+user.getEmail()+" already exists!");
         }
         else{
