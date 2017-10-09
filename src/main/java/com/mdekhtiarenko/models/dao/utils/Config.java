@@ -40,6 +40,7 @@ public class Config {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+
     }
 
     public String getUrl() {

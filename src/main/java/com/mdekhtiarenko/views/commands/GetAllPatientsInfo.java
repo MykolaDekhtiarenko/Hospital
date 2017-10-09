@@ -24,7 +24,7 @@ public class GetAllPatientsInfo implements Command {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         List<User> patients = userService.getAll();
-        req.setAttribute("title", bundle.getString("staffpage.all_patients_title"));
+        req.setAttribute("title", "all");
         req.setAttribute("patientList", patients);
         return STAFF_HOMEPAGE;
     }

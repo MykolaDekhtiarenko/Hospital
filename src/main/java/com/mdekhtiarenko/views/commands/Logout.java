@@ -12,7 +12,9 @@ public class Logout implements Command {
     private static final String URL_TO_GO = "/rest/login";
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        String language = (String) req.getSession().getAttribute("language");
         req.getSession().invalidate();
+        req.getSession().setAttribute("language", language);
         return URL_TO_GO;
     }
 

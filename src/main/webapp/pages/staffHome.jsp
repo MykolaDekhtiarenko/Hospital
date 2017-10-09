@@ -17,11 +17,24 @@
     <fmt:message key="staffpage.email_label" var="email_label" />
     <fmt:message key="staffpage.page_label" var="page_label" />
     <fmt:message key="staffpage.open_full_info" var="open_full_info" />
+    <fmt:message key="staffpage.sick_patients_title" var="sick_patients_title"/>
+    <fmt:message key="staffpage.all_patients_title" var="all_patients_title"/>
 
 
     <c:import url="components/navbar.jsp"/>
 
-    <center><h1>${title}</h1></center>
+    <center>
+        <h1>
+            <c:if test="${title == 'all'}">
+                ${all_patients_title}
+            </c:if>
+            <c:if test="${title == 'sick'}">
+                ${sick_patients_title}
+            </c:if>
+
+        </h1>
+    </center>
+
     <div class="container">
         <table class="table table-striped">
             <tr>

@@ -1,3 +1,5 @@
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: mykola.dekhtiarenko
@@ -12,13 +14,13 @@
         <fmt:setLocale value="${language}" />
     </c:if>
     <fmt:setBundle basename="Labels"/>
-    <title>Title</title>
+    <fmt:message key="general.index_page" var="index_page"/>
+
+    <title>404</title>
 </head>
 <body>
-    <%--<h1>Во фсем виноват Нэвэльный!</h1>--%>
-    <h1>Уккщк зфпу</h1>
+    <h1>404</h1>
     <br>
-    <a href="/">Index</a>
-
+    <a href="/">${index_page}</a>
 </body>
 </html>

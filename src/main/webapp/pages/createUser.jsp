@@ -14,6 +14,7 @@
         <fmt:setLocale value="${language}" />
     </c:if>
     <fmt:setBundle basename="Labels"/>
+
     <fmt:message key="navbar.add_user" var="add_user"/>
     <title>${add_user}</title>
     <link rel="stylesheet" href="/static/css/login.css">
@@ -34,21 +35,33 @@
 </script>
 
 
+<fmt:message key="registration.email" var="email"/>
+<fmt:message key="registration.password" var="password"/>
+<fmt:message key="registration.first_name" var="first_name"/>
+<fmt:message key="registration.last_name" var="last_name"/>
+<fmt:message key="registration.phone" var="phone"/>
+<fmt:message key="registration.birthday" var="birthday"/>
+<fmt:message key="user.role_doctor" var="role_doctor"/>
+<fmt:message key="user.role_nurse" var="role_nurse"/>
+<fmt:message key="user.role_patient" var="role_patient"/>
+<fmt:message key="user.create" var="create"/>
+
+
 <div class="registration-page">
     <div class="form">
         <form class="login-form" action="/rest/user/create" method="POST">
-            <input type="email" name="email" placeholder="email"/>
-            <input type="password" name="password" placeholder="password"/>
-            <input type="text" name="firstName" placeholder="first name"/>
-            <input type="text" name="lastName" placeholder="last name"/>
-            <input type="text" name="phone" placeholder="phone"/>
+            <input type="email" name="email" placeholder="${email}"/>
+            <input type="password" name="password" placeholder="${password}"/>
+            <input type="text" name="firstName" placeholder="${first_name}"/>
+            <input type="text" name="lastName" placeholder="${last_name}"/>
+            <input type="text" name="phone" placeholder="${phone}"/>
             <select name="role" class="selectpicker">
-                <option value="PATIENT">Patient</option>
-                <option value="NURSE">Nurse</option>
-                <option value="DOCTOR">Doctor</option>
+                <option value="PATIENT">${role_patient}</option>
+                <option value="NURSE">${role_nurse}</option>
+                <option value="DOCTOR">${role_doctor}</option>
             </select>
 
-            <input class="datepicker" name="birthday" placeholder="birthday" data-date-format="mm/dd/yyyy"/>
+            <input class="datepicker" name="birthday" placeholder="${birthday}" data-date-format="mm/dd/yyyy"/>
             <script>
                 $('.datepicker').datepicker({
                  startDate: '-3d'
@@ -56,7 +69,7 @@
             </script>
 
 
-            <input type="submit" class="btn btn-info button margin-zero">
+            <input type="submit" value="${create}" class="btn btn-info button margin-zero">
             <p class="message error"> <c:out value="${errorResp.errorMessage}"/></p>
         </form>
     </div>

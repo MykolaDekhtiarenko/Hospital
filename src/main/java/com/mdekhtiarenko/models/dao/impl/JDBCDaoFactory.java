@@ -2,7 +2,9 @@ package com.mdekhtiarenko.models.dao.impl;
 
 import com.mdekhtiarenko.models.dao.*;
 import com.mdekhtiarenko.models.dao.utils.Config;
+import org.apache.commons.dbcp2.BasicDataSource;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -14,9 +16,16 @@ public class JDBCDaoFactory extends DaoFactory {
 
     Connection getConnection(){
         Config config = Config.getInstance();
+
+        BasicDataSource ds = new BasicDataSource();
+        ds.setDriverClassName("com.mysql.jdbc.Driver");
+        ds.setUrl(config.getUrl());
+        ds.setPassword(config.getPass());
+        ds.setUsername(config.getUser());
+
         Connection connection;
         try {
-            connection = DriverManager.getConnection(config.getUrl() , config.getUser(), config.getPass());
+            connection = ds.getConnection();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

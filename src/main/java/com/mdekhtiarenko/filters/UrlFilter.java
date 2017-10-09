@@ -51,7 +51,6 @@ public class UrlFilter implements Filter {
         String path = request.getRequestURI();
         path = path.replaceAll(".*/rest", "").replaceAll("\\d+", "");
         String url = method+":"+path;
-        System.out.println(url);
         HttpSession session = ((HttpServletRequest) servletRequest).getSession();
 
         if(authorizationRequieredUrls.contains(url)&&!hasUser(session)){
