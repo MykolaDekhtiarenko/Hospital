@@ -20,6 +20,12 @@
       <url-pattern>*.jsp</url-pattern>
       <page-encoding>UTF-8</page-encoding>
     </jsp-property-group>
+
+    <!--<taglib>-->
+      <!--<taglib-uri>WEB-INF/tags.tdl</taglib-uri>-->
+      <!--<taglib-location>WEB-INF/tags.tdl</taglib-location>-->
+    <!--</taglib>-->
+
   </jsp-config>
 
 </web-app>

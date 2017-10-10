@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="ftm" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="ctl" tagdir="/WEB-INF/tags" %>
 
 <%--
   Created by IntelliJ IDEA.
@@ -23,7 +23,6 @@
 </head>
 <body>
 <fmt:message key="patient_homepage_header_label" var="homepage_header"/>
-<fmt:message key="now" var="now"/>
 <fmt:message key="diagnose_date_label" var="diagnose_date_label"/>
 <fmt:message key="doctor_assignment" var="doctor_assignment"/>
 <fmt:message key="assignment_done" var="assignment_done"/>
@@ -53,13 +52,13 @@
                     <h5 class="mb-0">
                         <a data-toggle="collapse" href="#collapse${treatmentHistory.id}" aria-expanded="true"
                            aria-controls="collapse${treatmentHistory.getId()}">
-                            <fmt:formatDate type="date" value="${treatmentHistory.startDate}"/>
-                            -
-                            <fmt:formatDate type="date" value="${treatmentHistory.endDate}"/>
-                            <c:if test="${empty treatmentHistory.endDate}">
-                                ${now}
-                            </c:if>
-
+                            <%--<fmt:formatDate type="date" value="${treatmentHistory.startDate}"/>--%>
+                            <%-----%>
+                            <%--<fmt:formatDate type="date" value="${treatmentHistory.endDate}"/>--%>
+                            <%--<c:if test="${empty treatmentHistory.endDate}">--%>
+                                <%--${now}--%>
+                            <%--</c:if>--%>
+                            <ctl:th_title startDate="${treatmentHistory.startDate}" endDate="${treatmentHistory.endDate}"/>
                         </a>
                     </h5>
                 </div>
