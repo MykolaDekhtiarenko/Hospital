@@ -1,6 +1,8 @@
 package com.mdekhtiarenko.views.commands;
 
+import com.mdekhtiarenko.exceptions.ForbiddenException;
 import com.mdekhtiarenko.models.entities.Assignment;
+import com.mdekhtiarenko.models.entities.User;
 import com.mdekhtiarenko.models.enums.AssignmentType;
 import com.mdekhtiarenko.services.AssignmentService;
 
@@ -14,6 +16,7 @@ import java.util.ResourceBundle;
 
 import static com.mdekhtiarenko.utils.UserUtils.hasDoctorUser;
 import static com.mdekhtiarenko.utils.UserUtils.hasStaffUser;
+import static com.mdekhtiarenko.views.Constants.USER;
 
 /**
  * Created by mykola.dekhtiarenko on 01.10.17.
@@ -32,30 +35,23 @@ public class ExecuteAssignment implements Command {
             return GetPatientDetailedInfo.getInstance().execute(req, res);
         }
 
-        if(currentUserHasPermission(assignmentOptional.get().getType(), req.getSession())){
-            assignmentService.executeAssignment(assignmentId);
+        try {
+            assignmentService.executeAssignment(assignmentId, (User)req.getSession().getAttribute(USER));
+        } catch (ForbiddenException e) {
+            req.setAttribute("error", bundle.getString("general.forbidden_exeption"));
+            return Error404.getInstance().execute(req, res);
         }
-        else {
-            req.setAttribute("error", bundle.getString("assignment.has_not_permission"));
-        }
+
         return GetPatientDetailedInfo.getInstance().execute(req, res);
     }
 
-    private boolean currentUserHasPermission(AssignmentType type, HttpSession session){
-        if((type==AssignmentType.MEDICINE||type==AssignmentType.PROCEDURE)&&hasStaffUser(session))
-            return true;
-        else if(type == AssignmentType.SURGERY&&hasDoctorUser(session))
-            return true;
-        else
-            return false;
-    }
 
     private ExecuteAssignment() {
         assignmentService = AssignmentService.getInstance();
         bundle = ResourceBundle.getBundle("Labels");
     }
 
-    //singelton pattern
+
     private static class Holder{
         private static ExecuteAssignment INSTANCE = new ExecuteAssignment();
     }

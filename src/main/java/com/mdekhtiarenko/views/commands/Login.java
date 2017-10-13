@@ -27,6 +27,7 @@ public class Login implements Command{
         String email = request.getParameter(PARAM_LOGIN);
         String password = request.getParameter(PARAM_PASSWORD);
         if( email != null && password != null ){
+//            System.out.println(userService.login(email, password));
             Optional<User> user = userService.login(email, password);
             if(user.isPresent()){
                 logger.info("User: "+email+" logged in!");
