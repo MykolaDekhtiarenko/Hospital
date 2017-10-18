@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mdekhtiarenko.utils.UserUtils.hasDoctorUser;
 import static com.mdekhtiarenko.utils.UserUtils.hasStaffUser;
 import static com.mdekhtiarenko.utils.UserUtils.hasUser;
 
@@ -21,22 +22,27 @@ public class UrlFilter implements Filter {
     private static final String URL_TO_GO = "/rest/login";
     private static final String ACCESS_DENIED = "/rest/error";
 
-    private List<String> authorizationRequieredUrls = new ArrayList<>();
+    private List<String> authorizationRequiredUrls = new ArrayList<>();
     private List<String> staffOnlyUrls = new ArrayList<>();
+    private List<String> doctorOnlyUrls = new ArrayList<>();
+
 
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        authorizationRequieredUrls.add("GET:/home");
+        authorizationRequiredUrls.add("GET:/home");
+
+        //Doctor and nurse
         staffOnlyUrls.add("GET:/patient/");
-        staffOnlyUrls.add("POST:/treatmentHistory/create");
-        staffOnlyUrls.add("POST:/treatmentHistory/update");
-        staffOnlyUrls.add("POST:/diagnose/create");
-        staffOnlyUrls.add("POST:/assignment/create");
         staffOnlyUrls.add("GET:/patients");
         staffOnlyUrls.add("POST:/assignment/update");
         staffOnlyUrls.add("GET:/user");
-        staffOnlyUrls.add("POST:/user/create");
+
+        doctorOnlyUrls.add("POST:/treatmentHistory/update");
+        doctorOnlyUrls.add("POST:/treatmentHistory/create");
+        doctorOnlyUrls.add("POST:/diagnose/create");
+        doctorOnlyUrls.add("POST:/assignment/create");
+        doctorOnlyUrls.add("POST:/user/create");
 
 
 
@@ -53,10 +59,13 @@ public class UrlFilter implements Filter {
         String url = method+":"+path;
         HttpSession session = ((HttpServletRequest) servletRequest).getSession();
 
-        if(authorizationRequieredUrls.contains(url)&&!hasUser(session)){
+        if(authorizationRequiredUrls.contains(url)&&!hasUser(session)){
             response.sendRedirect(request.getContextPath() + URL_TO_GO);
         }
         else if (staffOnlyUrls.contains(url)&&!hasStaffUser(session)){
+            response.sendRedirect(request.getContextPath() + ACCESS_DENIED);
+        }
+        else if(doctorOnlyUrls.contains(url)&&!hasDoctorUser(session)){
             response.sendRedirect(request.getContextPath() + ACCESS_DENIED);
         }
         else {

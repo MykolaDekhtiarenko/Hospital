@@ -98,7 +98,7 @@
                         </c:choose>
                         <c:forEach items="${treatmentHistory.diagnoseList}" var="diagnose">
                             <div>
-                                <h5>${diagnose_date_label} <ftm:formatDate type="date" value="${diagnose.date}"/></h5>
+                                <h5>${diagnose_date_label} <fmt:formatDate type="date" value="${diagnose.date}"/></h5>
                                 <div>${diagnose.diagnose}</div>
                                 <c:if test="${not empty diagnose.assignmentList}">
                                     <div>${doctor_assignment}:</div>

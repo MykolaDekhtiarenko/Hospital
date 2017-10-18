@@ -50,11 +50,11 @@
 <div class="registration-page">
     <div class="form">
         <form class="login-form" action="/rest/user/create" method="POST">
-            <input type="email" name="email" placeholder="${email}"/>
+            <input type="email" name="email" placeholder="${email}" value="${errorResp.result.get().email}"/>
             <input type="password" name="password" placeholder="${password}"/>
-            <input type="text" name="firstName" placeholder="${first_name}"/>
-            <input type="text" name="lastName" placeholder="${last_name}"/>
-            <input type="text" name="phone" placeholder="${phone}"/>
+            <input type="text" name="firstName" placeholder="${first_name}" value="${errorResp.result.get().firstName}"/>
+            <input type="text" name="lastName" placeholder="${last_name}" value="${errorResp.result.get().lastName}"/>
+            <input type="text" name="phone" placeholder="${phone}" value="${errorResp.result.get().phone}"/>
             <select name="role" class="selectpicker">
                 <option value="PATIENT">${role_patient}</option>
                 <option value="NURSE">${role_nurse}</option>
